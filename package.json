@@ -5,6 +5,7 @@
   "author": "dolpen <dolpen@dolpen.net>",
   "description": "kawaii is justice",
   "dependencies": {
+    "cron": "^1.0.9",
     "hubot": "^2.13.2",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.1.5",
