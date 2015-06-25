@@ -1,8 +1,12 @@
-# scripts/hello.coffee
-# 事実上の挨拶
+# Description:
+#   pingや簡単なあいさつや生存確認のためのもの
+#
+# Notes:
+#   重要なのは癒し
+#
 module.exports = (robot) ->
-  robot.respond /にゃ[んー〜っ]$/i, (msg) ->
-    nyas = [
+  robot.hear /にゃ/i, (msg) ->
+    msg.send msg.random [
       "にゃ〜",
       "にゃんにゃん",
       "にゃ！",
@@ -10,5 +14,3 @@ module.exports = (robot) ->
       "にゃー",
       "にゃっ"
     ]
-    nya = msg.random nyas
-    msg.send "#{nya}"
