@@ -62,12 +62,12 @@ hubot でデフォルトで入っているコマンドに関しては、```karen
 
 dyno の停止
 ```
-curl -n -X PATCH https://api.heroku.com/apps/infinite-ocean-6752/formation -H "Accept: application/vnd.heroku+json; version=3" -H "Content-Type: application/json" -d '{"updates": [{"process": "web", "quantity": 0, "size": "Free"}]}'
+curl -n -X PATCH https://api.heroku.com/apps/<アプリケーションID>/formation -H "Accept: application/vnd.heroku+json; version=3" -H "Content-Type: application/json" -d '{"updates": [{"process": "web", "quantity": 0, "size": "Free"}]}'
 ```
 
 dyno の起動
 ```
-curl -n -X PATCH https://api.heroku.com/apps/infinite-ocean-6752/formation -H "Accept: application/vnd.heroku+json; version=3" -H "Content-Type: application/json" -d '{"updates": [{"process": "web", "quantity": 1, "size": "Free"}]}'
+curl -n -X PATCH https://api.heroku.com/apps/<アプリケーションID>/formation -H "Accept: application/vnd.heroku+json; version=3" -H "Content-Type: application/json" -d '{"updates": [{"process": "web", "quantity": 1, "size": "Free"}]}'
 ```
 
 これを、 一日の動作時間が18時間を超えないように指定すればOK
