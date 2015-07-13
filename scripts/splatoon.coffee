@@ -10,4 +10,4 @@ module.exports = (robot) ->
     .get()
     request (err, res, body) ->
       json = JSON.parse body
-      msg.reply 'レギュラーは'+json[0]['stages'][0]['name']+'と'+json[0]['stages'][1]['name']+'だよ。イカ、よろしくー'
+      msg.reply 'レギュラーは'+json[0]['stages'][0]['name']+'と'+json[0]['stages'][1]['name']+'だよ。\nイカ、よろしくー'
