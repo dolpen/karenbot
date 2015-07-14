@@ -48,9 +48,10 @@ hubot でデフォルトで入っているコマンドに関しては、```karen
 ここまでで動作は出来るが、
 
  * heroku の規約が変更され、 Free の dyno が1日あたり18時間しか動かせない
-    * 今は警告のみだが2ヶ月程度で強制停止される
+ * 今は警告のみだが2ヶ月程度で強制停止される
  * Webサービスであれば、アクセスがなければ dyno は停止する(カウント外)が、
  hubot のように常時待ち受けるものは、明示的に止めないと確実に制限を突破する。
+ * 制限を突破し、停止された dyno は、6時間経過や日付の経過で再び動作可能になっても、自動で起動しない
  * 動かす dyno の台数を時間帯で変更する Process Scheduler というアドオンは Free dyno に対応していない
   
 という酷い状況なので、下記のように対処した。
@@ -60,14 +61,22 @@ hubot でデフォルトで入っているコマンドに関しては、```karen
     * Heroku Scheduler
  * Heroku Scheduler の リンクで、Heroku API を定期的に curl させるコマンドを設定する
 
-dyno の停止
+dyno の停止(実質は起動台数を0にする更新)
 ```
-curl -n -X PATCH https://api.heroku.com/apps/<アプリケーションID>/formation -H "Accept: application/vnd.heroku+json; version=3" -H "Content-Type: application/json" -d '{"updates": [{"process": "web", "quantity": 0, "size": "Free"}]}'
+curl -n -X PATCH https://api.heroku.com/apps/<アプリケーションID>/formation
+ -H "Accept: application/vnd.heroku+json; version=3"
+ -H "Content-Type: application/json"
+ -H "Authorization: ＜コマンド heroku auth:token で取れるトークン＞"
+ -d '{"updates": [{"process": "web", "quantity": 1, "size": "Free"}]}'
 ```
 
-dyno の起動
+dyno の起動(実質は起動台数を1にする更新)
 ```
-curl -n -X PATCH https://api.heroku.com/apps/<アプリケーションID>/formation -H "Accept: application/vnd.heroku+json; version=3" -H "Content-Type: application/json" -d '{"updates": [{"process": "web", "quantity": 1, "size": "Free"}]}'
+curl -n -X PATCH https://api.heroku.com/apps/<アプリケーションID>/formation
+ -H "Accept: application/vnd.heroku+json; version=3"
+ -H "Content-Type: application/json"
+ -H "Authorization: ＜コマンド heroku auth:token で取れるトークン＞"
+ -d '{"updates": [{"process": "web", "quantity": 1, "size": "Free"}]}'
 ```
 
 これを、 一日の動作時間が18時間を超えないように指定すればOK
