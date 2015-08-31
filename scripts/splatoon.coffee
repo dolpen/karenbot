@@ -25,7 +25,7 @@ module.exports = (robot) ->
         request_info (err, res, body) ->
           json_info = JSON.parse body
           now_time = (new Date()).getTime()
-          result = (item for item in json_info.schedule when item.startTime >= now_time)[0]
+          result = (item for item in json_info.schedule when item.startTime <= now_time and item.endTime >= now_time)[0]
           resp += "レギュラーは " + result.regular.maps[0]["nameJP"] + " と " + result.regular.maps[1]["nameJP"] + " だよ。\n"
           resp += "ガチマッチは " + result.ranked.maps[0]["nameJP"] + " と " + result.ranked.maps[1]["nameJP"] + " の " + result.ranked["rulesJP"] + " だよ。\n"
           resp += "イカ、よろしくー"
