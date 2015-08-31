@@ -21,9 +21,12 @@ module.exports = (robot) ->
         resp += "イカ、よろしくー"
         msg.reply resp
       else
-        request_info = msg.http("http://s3-ap-northeast-1.amazonaws.com/splatoon-data.nintendo.net/stages_info.json").get()
+        request_info = msg.http("https://splatoon.ink/schedule.json").get()
         request_info (err, res, body) ->
           json_info = JSON.parse body
-          resp += "レギュラーは " + json_info[0]["stages"][0]["name"] + " と " + json_info[0]["stages"][1]["name"] + " だよ。\n"
+          now_time = (new Date()).getTime()
+          result = (item for item in json_info.schedule when item.startTime >= now_time)[0]
+          resp += "レギュラーは " + result.regular.maps[0]["nameJP"] + " と " + result.regular.maps[1]["nameJP"] + " だよ。\n"
+          resp += "ガチマッチは " + result.ranked.maps[0]["nameJP"] + " と " + result.ranked.maps[1]["nameJP"] + " の " + result.ranked["rulesJP"] + " だよ。\n"
           resp += "イカ、よろしくー"
           msg.reply resp
