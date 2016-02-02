@@ -5,7 +5,7 @@
 #   イカ、よろしくー
 #
 module.exports = (robot) ->
-  robot.respond /(イカ)/i, (msg) ->
+  robot.hear /(イカ)/i, (msg) ->
     resp = "ハイカラニュースの時間だよ!\n"
     request_fes = msg.http("http://s3-ap-northeast-1.amazonaws.com/splatoon-data.nintendo.net/fes_info.json").get()
     request_fes (err, res, body_fes) ->
