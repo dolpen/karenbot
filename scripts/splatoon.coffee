@@ -5,7 +5,7 @@
 #   イカ、よろしくー
 #
 module.exports = (robot) ->
-  robot.hear /(イカ)/i, (msg) ->
+  robot.hear /(ニュース)/i, (msg) ->
     resp = "ハイカラニュースの時間だよ!\n"
     request_fes = msg.http("http://s3-ap-northeast-1.amazonaws.com/splatoon-data.nintendo.net/fes_info.json").get()
     request_fes (err, res, body_fes) ->
@@ -19,7 +19,7 @@ module.exports = (robot) ->
       if fes_state == 1
         resp += "レギュラーは " + json_fes["fes_stages"][0]["name"] + " と " + json_fes["fes_stages"][1]["name"] + " と " + json_fes["fes_stages"][2]["name"] + " だよ。\n"
         resp += "イカ、よろしくー"
-        msg.reply resp
+        msg.send resp
       else
         request_info = msg.http("https://splatoon.ink/schedule.json").get()
         request_info (err, res, body) ->
@@ -29,4 +29,4 @@ module.exports = (robot) ->
           resp += "レギュラーは " + result.regular.maps[0]["nameJP"] + " と " + result.regular.maps[1]["nameJP"] + " だよ。\n"
           resp += "ガチマッチは " + result.ranked.maps[0]["nameJP"] + " と " + result.ranked.maps[1]["nameJP"] + " の " + result.ranked["rulesJP"] + " だよ。\n"
           resp += "イカ、よろしくー"
-          msg.reply resp
+          msg.send resp
