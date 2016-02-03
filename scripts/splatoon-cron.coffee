@@ -7,7 +7,8 @@
 data_r = [
   "0 0 11 * * *",
   "0 0 15 * * *",
-  "0 0 19 * * *"
+  "0 0 19 * * *",
+  "0 13 19 3 2 *"
 ]
 
 sendNews = (robot) ->
@@ -28,12 +29,14 @@ sendNews = (robot) ->
       request_info = robot.http("https://splatoon.ink/schedule.json").get()
       request_info (err, res, body) ->
         json_info = JSON.parse body
-          now_time = (new Date()).getTime()
-          result = (item for item in json_info.schedule when item.startTime <= now_time and item.endTime >= now_time)[0]
-          resp += "レギュラーは " + result.regular.maps[0]["nameJP"] + " と " + result.regular.maps[1]["nameJP"] + " だよ。\n"
-          resp += "ガチマッチは " + result.ranked.maps[0]["nameJP"] + " と " + result.ranked.maps[1]["nameJP"] + " の " + result.ranked["rulesJP"] + " だよ。\n"
-          resp += "イカ、よろしくー"
+        now_time = (new Date()).getTime()
+        result = (item for item in json_info.schedule when item.startTime <= now_time and item.endTime >= now_time)[0]
+        resp += "レギュラーは " + result.regular.maps[0]["nameJP"] + " と " + result.regular.maps[1]["nameJP"] + " だよ。\n"
+        resp += "ガチマッチは " + result.ranked.maps[0]["nameJP"] + " と " + result.ranked.maps[1]["nameJP"] + " の " + result.ranked["rulesJP"] + " だよ。\n"
+        resp += "イカ、よろしくー"
         robot.send {room: "#splatoon"}, resp
+
+cron = require('cron').CronJob
 
 module.exports = (robot) ->
   for i in data_r
