@@ -43,3 +43,7 @@ module.exports = (robot) ->
       new cron i, () =>
         sendNews(robot)
       , null, true, "Asia/Tokyo"
+
+  robot.respond /(ニュース|ステージ)/i, (msg) ->
+    sendNews(robot)
+
