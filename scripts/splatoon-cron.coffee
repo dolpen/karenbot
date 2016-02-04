@@ -38,12 +38,12 @@ sendNews = (robot) ->
 cron = require('cron').CronJob
 
 module.exports = (robot) ->
-  for i in data_r
-    do (i) ->
-      new cron i, () =>
-        sendNews(robot)
-      , null, true, "Asia/Tokyo"
+  #for i in data_r
+  #  do (i) ->
+  #    new cron i, () =>
+  #      sendNews(robot)
+  #    , null, true, "Asia/Tokyo"
 
-  robot.respond /(ニュース|ステージ)/i, (msg) ->
-    sendNews(robot)
+  #robot.respond /(ニュース|ステージ)/i, (msg) ->
+  #  sendNews(robot)
 

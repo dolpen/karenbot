@@ -266,7 +266,7 @@ news.processInfo = (robot, resp) ->
     resp += ":aori: 現在の" + result.ranked["rulesJP"] + "のステージはコチラ！\n:hotaru: じゃらじゃらじゃらじゃら〜...ばん！\n"
     resp += news.get(result.ranked.maps[0]["nameJP"]) + news.get(result.ranked.maps[1]["nameJP"])
     resp += data.epilogue
-    robot.send resp
+    robot.send {room: "#splatoon"}, resp
 
 news.processFes = (robot) ->
   request = robot.http("http://s3-ap-northeast-1.amazonaws.com/splatoon-data.nintendo.net/fes_info.json").get()
@@ -283,7 +283,7 @@ news.processFes = (robot) ->
       resp += data.fes
       resp += news.get(json_fes["fes_stages"][0]["name"]) + news.get(json_fes["fes_stages"][1]["name"]) + news.get(json_fes["fes_stages"][2]["name"])
       resp += data.epilogue
-      robot.send resp
+      robot.send {room: "#splatoon"}, resp
     else
       news.processInfo(robot, resp);
 
@@ -298,7 +298,12 @@ cronTimes = [
 ]
 
 module.exports = (robot) ->
-  robot.respond /(テスト)/i, (msg) ->
-    news.process(msg)
+  for i in cronTimes
+    do (i) ->
+      new cron i, () =>
+        news.process(robot)
+      , null, true, "Asia/Tokyo"
+  robot.respond /(ニュース|ステージ)/i, (msg) ->
+    news.process(robot)
 
 
