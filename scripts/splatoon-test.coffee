@@ -305,6 +305,6 @@ module.exports = (robot) ->
       , null, true, "Asia/Tokyo"
 
   robot.respond /(テスト)/i, (msg) ->
-    news.process(robot)
+    news.process(msg)
 
 
