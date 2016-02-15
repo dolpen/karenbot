@@ -5,6 +5,19 @@
 #   イカ、よろしくー
 #
 kaiwa = {
+  "Ｂバスパーク": [
+    ["スケボーは苦手･･･\n骨折とかしそう･･･", "骨、無いじゃん･･･"],
+    ["ここは 接近戦が勝負の決め手！\n死角も多い！", "高台から チャージャー使うのも\n捨てがたいよね～"],
+    ["ホタルちゃん！\nここで気を付ける所は？", "･･････背後？"],
+    ["バトル後に出てくるジャッジくん！\nヤシの実を取ろうとして、落ちてたよー！", "ダイエットしなきゃね～、おたがい"],
+    ["ここでコンサートしたら\nチョー盛り上がりそー！", "アオリちゃん、\nたまに いい事言うよね"],
+    ["あー、ヤシの実ー！\nジュース、飲みたいなー！", "ごいっしょに、ポテトもどうぞ～"],
+    ["ここって 勢い余って、お客さんに\nインクがかかりそうになるよね", "･･･ワザとやってね？"],
+    ["ここで遊んだあとのジュース\n美味しいよねー", "アオリちゃん、\nそれ前もどっかで言ってたよね･･･"],
+    ["真ん中の高台、眺めイイよねー", "ボンヤリしてたら、うたれっぞ～"],
+    ["昔って、こんな遊び場 なかったよね\n最近の若い子は恵まれすぎだよー", "アタシたちも じゅうぶん若いけどな"],
+    ["ここ、カナアミがあるんだよね！\n知らなかったよ･･･", "とっくの昔からあったっしょ"]
+  ],
   "Bバスパーク": [
     ["スケボーは苦手･･･\n骨折とかしそう･･･", "骨、無いじゃん･･･"],
     ["ここは 接近戦が勝負の決め手！\n死角も多い！", "高台から チャージャー使うのも\n捨てがたいよね～"],
@@ -242,6 +255,7 @@ cron = require('cron').CronJob
 data = {}
 data.prologue = ":aori: ごきげんイカがですか？ハイカラニュースの時間だよ！\n:hotaru: こんちゃ〜、シオカラーズで〜す。\n"
 data.regular = ":aori: 現在のレギュラーマッチのステージはコチラ！\n:hotaru: じゃらじゃらじゃらじゃら〜...ばん！\n"
+data.next = ":aori: 次の時間帯のレギュラーマッチのステージはコチラ！\n:hotaru: じゃらじゃらじゃらじゃら〜...ばん！\n"
 data.ranked = ":aori: 現在のガチマッチのステージはコチラ！\n:hotaru: じゃらじゃらじゃらじゃら〜...ばん！\n"
 data.epilogue = ":aori: じゃ、今日も元気にいってみよー！\n:aori: イカよろしくーーー！\n:hotaru: イカよろしく〜〜〜"
 data.fes = ":aori: フェスマッチのステージはコチラ！\n:hotaru: じゃらじゃらじゃらじゃら〜...ばん！\n"
@@ -250,10 +264,10 @@ news = {}
 
 news.get = (name) ->
   if(!kaiwa[name])
-    return "【" + name + "】\n:aori:\nまだ何も言うことないね！\n:hotaru:\nわたしらもよくわかってないもんね〜\n"
+    return "\n【" + name + "】\n:aori:\nまだ何も言うことないね！\n:hotaru:\nわたしらもよくわかってないもんね〜\n"
   s = kaiwa[name]
   k = s[Math.floor(Math.random() * s.length)]
-  return "【" + name + "】\n:aori:\n" + k[0] + "\n:hotaru:\n" + k[1] + "\n"
+  return "\n【" + name + "】\n:aori:\n" + k[0] + "\n:hotaru:\n" + k[1] + "\n"
 
 news.processInfo = (robot, resp) ->
   request = robot.http("https://splatoon.ink/schedule.json").get()
@@ -264,6 +278,19 @@ news.processInfo = (robot, resp) ->
     resp += data.regular
     resp += news.get(result.regular.maps[0]["nameJP"]) + news.get(result.regular.maps[1]["nameJP"])
     resp += ":aori: 現在の" + result.ranked["rulesJP"] + "のステージはコチラ！\n:hotaru: じゃらじゃらじゃらじゃら〜...ばん！\n"
+    resp += news.get(result.ranked.maps[0]["nameJP"]) + news.get(result.ranked.maps[1]["nameJP"])
+    resp += data.epilogue
+    robot.send {room: "#splatoon"}, resp
+
+news.processNextInfo = (robot, resp) ->
+  request = robot.http("https://splatoon.ink/schedule.json").get()
+  request (err, res, body) ->
+    json_info = JSON.parse body
+    now_time = (new Date()).getTime()
+    result = (item for item in json_info.schedule when item.startTime > now_time and item.endTime >= now_time)[0]
+    resp += data.next
+    resp += news.get(result.regular.maps[0]["nameJP"]) + news.get(result.regular.maps[1]["nameJP"])
+    resp += ":aori: 次の時間帯の" + result.ranked["rulesJP"] + "のステージはコチラ！\n:hotaru: じゃらじゃらじゃらじゃら〜...ばん！\n"
     resp += news.get(result.ranked.maps[0]["nameJP"]) + news.get(result.ranked.maps[1]["nameJP"])
     resp += data.epilogue
     robot.send {room: "#splatoon"}, resp
@@ -292,9 +319,9 @@ news.process = (robot) ->
 
 
 cronTimes = [
-  "0 0 11 * * *",
-  "0 0 15 * * *",
-  "0 0 19 * * *"
+  "0 0 11 * * 1-5",
+  "0 0 15 * * 1-5",
+  "0 0 19 * * 1-5"
 ]
 
 module.exports = (robot) ->
